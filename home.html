@@ -1,0 +1,48 @@
+<div id="contenedor1">
+<div class="logobanco"></div>
+<div class="titulo fontbold backverde">Solicitud de contacto por alta de tarjetas (*)</div>
+<div class="subtitulo fontregular colorgris">Si estás interesado en disfrutar de las promociones y beneficios de las tarjetas Banco Provincia, dejanos tus datos y te contactaremos.</div>
+
+<form id="form1">
+<div id="cajaformulario">
+
+<div class="lineaform fontregular">Nombre y Apellido<div class="form"><input id="nombre" name="nombre" type="text" class="imputtext fontmedium colorverde"></div></div>
+
+<div class="lineaform fontregular" style="margin-right:0px;">x
+<div class="form2 colorgris fontregular">
+<select class="imputtext2 colorgris" id="tipo_de_documento" name="tipo_de_documento">
+  <option selected="selected" value="DU">DU</option>
+  <option value="CUIT">CUIT</option>
+  <option value="CUIL">CUIL</option>
+  <option value="CDI">CDI</option>
+</select>
+</div>
+<div class="form"><input type="number" min="0" step="1" name="nro_documento" id="nro_documento" class="imputtext fontmedium colorverde"></div></div>
+
+<div class="lineaform fontregular">Teléfono Celular
+  <div class="form3"><input type="number" min="0" step="1" name="celular_codigo_area" id="celular_codigo_area" class="imputtext fontmedium colorverde" placeholder="área"></div><div class="form4"><input  type="number" min="0" step="1" name="celular_numero" id="celular_numero" class="imputtext fontmedium colorverde" placeholder="número"></div></div>
+
+<div class="lineaform fontregular" style="margin-right:0px;">Teléfono Fijo
+  <div class="form3"><input  type="number" min="0" step="1" name="telefono_codigo_area" id="telefono_codigo_area" class="imputtext fontmedium colorverde" placeholder="área"></div><div class="form4"><input type="number" min="0" step="1" name="telefono_numero" id="telefono_numero" class="imputtext fontmedium colorverde" placeholder="número"></div></div>
+
+<div class="lineaform fontregular">Email
+  <div class="form colorverde"><input  type="email" name="email" id="email" class="imputtext fontmedium colorverde"></div></div>
+
+<div class="lineaform fontregular" style="margin-right:0px;">¿Desea recibir novedades por email?
+<div class="form5">
+<label style="display:inline">
+<div class="sino colorgris">SI</div>
+<div class="sino"><input checked="checked" name="novedades" type="radio" value="SI"></div></label>
+<label style="display:inline"><div class="sino colorgris">NO</div>
+<div class="sino"><input name="novedades" type="radio" value="NO"></div></label>
+
+</div>
+</div>
+</div>
+
+<div class="botonenviar" onclick="enviar()">Enviar</div>
+
+</form>
+
+<div class="pielg">(*) Sujeto a aprobación crediticia y condiciones de contratación del Banco de la Provincia de Buenos Aires CUIT: 33-99924210-9, Calle 7 Num.726 La Plata. Al suministrar la información solicitada el usuario acepta que la misma sea usada como un medio de comunicación entre las dos partes. El banco tratara los datos suministrados con absoluta confidencialidad y solo para el objetivo que consta en este formulario (Ley 25.326) Usted podrá solicitar la eliminación de tales datos a través de nuestro Centro de Contacto Telefonico.</div>
+</div>

@@ -1,0 +1,231 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Banco Provincia</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+<meta name="viewport" content="width=device-width" />
+<link rel="stylesheet"  href="bancoprovincia.css" type="text/css" charset="utf-8" />
+<link rel="stylesheet"  href="fonts/stylesheet.css" type="text/css" charset="utf-8" />
+<style>
+#admin{ width:50px; height:50px; position:fixed; top:0; left:0; z-index:10000; background:url(images/Vacio.gif);}
+#panel{ width:100%; height:100%; position:fixed;z-index:20000; background:#CCC; display:none}
+label{ font-family:Verdana, Geneva, sans-serif; font-size:14px; color:#000; width:80%; margin:auto; display:block; margin-top:30px}
+input[type="button"]{ width:30%; height:50px; margin:auto; display:block}
+#log{ font-family:Verdana, Geneva, sans-serif; font-size:12px; text-align:center}
+</style>
+<script type="text/javascript" src="js/panino.js"></script>
+<script type="text/javascript" src="js/comunes.js"></script>
+<script type="text/javascript" src="js/paninoAJAX.js"></script>
+<script type="text/javascript" src="js/utils.js"></script>
+<script type="text/javascript" src="js/transicion.js"></script>
+<script>
+
+
+function getPage(p,callback){
+		request(
+			p,
+			function(r){
+				$('contentapp').innerHTML=r;
+				if(typeof callback=='function'){
+					callback();
+				}
+			},
+			{}
+		);
+}
+function getRandomInt(min, max) {
+    	return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+function inArray(needle, haystack) {
+    var length = haystack.length;
+    for(var i = 0; i < length; i++) {
+        if(haystack[i] == needle) return true;
+    }
+    return false;
+}
+function getOptSelectedFromName(name){
+	var els=document.getElementsByName(name),l=els.length,i=0;
+	for(;i<l;i++){
+		if(els[i].checked){
+			return els[i].value;
+		}
+	}
+	return 0;
+}
+
+function enviar(){
+	/*var r=new print_JS(); 
+    alert(r.recorrer(ns.datos)); 
+	return;*/
+	if($('nombre').value.length<2){
+		alert('Por favor complete el campo Nombre');
+		return;
+	}
+	if($('nro_documento').value.length<2){
+		alert('Por favor complete el campo Número de Documento');
+		return;
+	}
+	if( ($('celular_codigo_area').value.length<1 && $('celular_numero').value.length<1) &&  ($('telefono_codigo_area').value.length<1 && $('telefono_numero').value.length<1)  ){
+		alert('Por favor complete alguno de los 2 teléfonos');
+		return;
+	}
+	if($('email').value.length<3 || $('email').value.indexOf('@')==-1 || $('email').value.indexOf('.')==-1 ){
+		alert('Por favor complete correctamente el campo E-mail');
+		return;
+	}
+	var usuario={};
+	usuario['nombre']=$('nombre').value;
+	usuario['nro_documento']=$('nro_documento').value;
+	usuario['celular_codigo_area']=$('celular_codigo_area').value;
+	usuario['celular_numero']=$('celular_numero').value;
+	usuario['telefono_codigo_area']=$('telefono_codigo_area').value;
+	usuario['telefono_numero']=$('telefono_numero').value;
+	usuario['email']=$('email').value;
+	usuario['novedades']=getOptSelectedFromName('novedades');
+	usuario['tablet']=ns.tablet;
+	ns.datos.push(usuario);
+	localStorage.setItem('datos',JSON.stringify(ns.datos));
+	getPage('gracias.html',volver);
+}
+function homear(){
+	getPage('home.html');
+}
+function volver(){
+	setTimeout(homear,2000);
+}
+function inicio(){
+	if(!localStorage.getItem('datos')){
+		ns.datos=[];
+	}else{
+		ns.datos=JSON.parse(localStorage.getItem('datos'));
+	}
+	if(!localStorage.getItem('tablet')){
+		ns.tablet=getRandomInt(1, 100)+'_'+(+new Date());
+		localStorage.setItem('tablet',ns.tablet);
+	}else{
+		ns.tablet=localStorage.getItem('tablet');
+	}
+	if(!localStorage.getItem('premios')){
+		ns.premios={};
+	}else{
+		ns.premios=JSON.parse(localStorage.getItem('premios'));
+	}
+}
+DR(inicio);
+
+function administrar(){
+	$('log').innerHTML='';
+	$('panel').style.display='block';
+}
+
+function testConexion(){
+		
+		var im=new Image(),
+		t=setTimeout(
+				function(){
+					$('log').innerHTML='No hay conexión a internet.';
+				},
+				5000
+		);
+		im.onload=function(){
+			clearTimeout(t);
+			saveDataInServer();
+			return;
+		};
+		im.onerror=function(){
+			clearTimeout(t);
+			$('log').innerHTML='No hay conexión a internet.';
+			return;
+		};
+		im.src='http://servidordeapps.com/images/ajax-loader.gif?'+(+new Date());
+		
+}
+	
+	
+function exportar(){
+	$('log').innerHTML='<img src="images/ajax-loader.gif">';
+	testConexion();
+}
+function saveDataInServer(){
+		var data={'proceso':'savedatamovistar','datos':localStorage.getItem('datos')};
+		//var data={'proceso':'ickki3p2','datos':''}
+		request(
+				'http://servidordeapps.com/proceso2.php',
+				function(r){
+					localStorage.removeItem('datos');
+					inicio();
+					$('log').innerHTML='Los datos han sido guardados.';
+				},
+				data
+		);
+}
+</script>
+</head>
+
+<body>
+<div id="admin" onClick="administrar()"></div>
+<div id="panel" style="width:100%; height:100%; position:absolute; top:0; left:0;">
+
+<div style="font-family:Verdana, Geneva, sans-serif; font-size:30px; font-weight:bold; width:80px; height:80px; position:absolute; top:0px; right:0px; text-align:center; line-height:50px; color:#000" onClick="$('panel').style.display='none';">x</div>
+
+<label><br>
+<input type="button" name="" value="Exportar Datos" onClick="exportar()">
+</label>
+<div id="log"></div>
+
+</div>
+<div id="contentapp">
+<div id="contenedor1">
+<div class="logobanco"></div>
+<div class="titulo fontbold backverde">Solicitud de contacto por alta de tarjetas (*)</div>
+<div class="subtitulo fontregular colorgris">Si estás interesado en disfrutar de las promociones y beneficios de las tarjetas Banco Provincia, dejanos tus datos y te contactaremos.</div>
+
+<form id="form1">
+<div id="cajaformulario">
+
+<div class="lineaform fontregular">Nombre y Apellido<div class="form"><input id="nombre" name="nombre" type="text" class="imputtext fontmedium colorverde"></div></div>
+
+<div class="lineaform fontregular" style="margin-right:0px;">x
+<div class="form2 colorgris fontregular">
+<select class="imputtext2 colorgris" id="tipo_de_documento" name="tipo_de_documento">
+  <option selected="selected" value="DU">DU</option>
+  <option value="CUIT">CUIT</option>
+  <option value="CUIL">CUIL</option>
+  <option value="CDI">CDI</option>
+</select>
+</div>
+<div class="form"><input type="number" min="0" step="1" name="nro_documento" id="nro_documento" class="imputtext fontmedium colorverde"></div></div>
+
+<div class="lineaform fontregular">Teléfono Celular
+  <div class="form3"><input type="number" min="0" step="1" name="celular_codigo_area" id="celular_codigo_area" class="imputtext fontmedium colorverde" placeholder="área"></div><div class="form4"><input  type="number" min="0" step="1" name="celular_numero" id="celular_numero" class="imputtext fontmedium colorverde" placeholder="número"></div></div>
+
+<div class="lineaform fontregular" style="margin-right:0px;">Teléfono Fijo
+  <div class="form3"><input  type="number" min="0" step="1" name="telefono_codigo_area" id="telefono_codigo_area" class="imputtext fontmedium colorverde" placeholder="área"></div><div class="form4"><input type="number" min="0" step="1" name="telefono_numero" id="telefono_numero" class="imputtext fontmedium colorverde" placeholder="número"></div></div>
+
+<div class="lineaform fontregular">Email
+  <div class="form colorverde"><input  type="email" name="email" id="email" class="imputtext fontmedium colorverde"></div></div>
+
+<div class="lineaform fontregular" style="margin-right:0px;">¿Desea recibir novedades por email?
+<div class="form5">
+<label style="display:inline">
+<div class="sino colorgris">SI</div>
+<div class="sino"><input checked="checked" name="novedades" type="radio" value="SI"></div></label>
+<label style="display:inline"><div class="sino colorgris">NO</div>
+<div class="sino"><input name="novedades" type="radio" value="NO"></div></label>
+
+</div>
+</div>
+</div>
+
+<div class="botonenviar" onclick="enviar()">Enviar</div>
+
+</form>
+
+<div class="pielg">(*) Sujeto a aprobación crediticia y condiciones de contratación del Banco de la Provincia de Buenos Aires CUIT: 33-99924210-9, Calle 7 Num.726 La Plata. Al suministrar la información solicitada el usuario acepta que la misma sea usada como un medio de comunicación entre las dos partes. El banco tratara los datos suministrados con absoluta confidencialidad y solo para el objetivo que consta en este formulario (Ley 25.326) Usted podrá solicitar la eliminación de tales datos a través de nuestro Centro de Contacto Telefonico.</div>
+</div>
+</div>
+</body>
+</html>
